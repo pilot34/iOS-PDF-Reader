@@ -20,6 +20,9 @@ public struct PDFDocument {
     let fileURL: NSURL
     let coreDocument: CGPDFDocument
     var password: String?
+    
+    
+    let imagesCache = NSCache()
 
 
     /**
@@ -59,7 +62,7 @@ public struct PDFDocument {
     func loadPages() {
         for pageNumber in 1...self.pageCount {
             if let backgroundImage = self.imageFromPDFPage(pageNumber) {
-                PDFViewController.images.setObject(backgroundImage, forKey: pageNumber)
+                self.imagesCache.setObject(backgroundImage, forKey: pageNumber)
             }
         }
     }
@@ -69,11 +72,11 @@ public struct PDFDocument {
     }
     
     func getPDFPageImage(pageNumber: Int) -> UIImage? {
-        if let image = PDFViewController.images.objectForKey(pageNumber) as? UIImage {
+        if let image = self.imagesCache.objectForKey(pageNumber) as? UIImage {
             return image
         } else {
             guard let image = self.imageFromPDFPage(pageNumber) else { return nil }
-            PDFViewController.images.setObject(image, forKey: pageNumber)
+            self.imagesCache.setObject(image, forKey: pageNumber)
             return image
         }
     }

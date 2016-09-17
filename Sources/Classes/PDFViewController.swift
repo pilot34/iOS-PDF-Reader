@@ -25,8 +25,6 @@ public class PDFViewController: UIViewController {
     public private(set) var currentPageIndex: Int = 0
     private var thumbnailCollectionController: PDFThumbnailCollectionViewController?
     
-    static let images = NSCache()
-    
     override public func viewDidLoad() {
         super.viewDidLoad()
         collectionView!.registerClass(PDFPageCollectionViewCell.self, forCellWithReuseIdentifier: "page")
