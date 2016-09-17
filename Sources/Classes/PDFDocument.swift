@@ -56,7 +56,10 @@ public struct PDFDocument {
         
         self.coreDocument = coreDocument
         self.pageCount = CGPDFDocumentGetNumberOfPages(coreDocument)
-        self.loadPages()
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            self.loadPages()
+        }
     }
     
     func loadPages() {
@@ -92,7 +95,7 @@ public struct PDFDocument {
         /*
          Create a low resolution image representation of the PDF page to display before the TiledPDFView renders its content.
          */
-        UIGraphicsBeginImageContextWithOptions(pageRect.size, true, 1.0)
+        UIGraphicsBeginImageContextWithOptions(pageRect.size, true, 0)
         guard let context = UIGraphicsGetCurrentContext() else { return nil }
         
         // First fill the background with white.

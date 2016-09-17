@@ -22,6 +22,8 @@ public class PDFViewController: UIViewController {
     /// Image used to override the default action button image
     public var actionButtonImage: UIImage?
     
+    public var showBars = true
+    
     public private(set) var currentPageIndex: Int = 0
     private var thumbnailCollectionController: PDFThumbnailCollectionViewController?
     
@@ -43,6 +45,10 @@ public class PDFViewController: UIViewController {
         let thumbnailWidth = (numberOfPages * PDFThumbnailCell.cellWidth) + totalSpacing
         let width = min(thumbnailWidth, view.bounds.size.width)
         thumbnailCollectionControllerWidth.constant = width
+        
+        if !showBars {
+            self.hideThumbnailController(true)
+        }
     }
     
     override public func prefersStatusBarHidden() -> Bool {
@@ -57,6 +63,7 @@ public class PDFViewController: UIViewController {
         if let controller = segue.destinationViewController as? PDFThumbnailCollectionViewController {
             thumbnailCollectionController = controller
             controller.document = document
+            controller.showImages = self.showBars
             controller.delegate = self
             controller.currentPageIndex = currentPageIndex
         }
@@ -124,6 +131,11 @@ extension PDFViewController: PDFPageCollectionViewCellDelegate {
     }
     
     func handleSingleTap(cell: PDFPageCollectionViewCell, pdfPageView: PDFPageView) {
+        
+        if !self.showBars {
+            return
+        }
+        
         let shouldHide = !isThumbnailControllerShown
         UIView.animateWithDuration(0.25, animations: {
             self.hideThumbnailController(shouldHide)

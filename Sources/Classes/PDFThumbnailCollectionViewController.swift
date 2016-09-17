@@ -15,8 +15,22 @@ protocol PDFThumbnailControllerDelegate: class {
 internal final class PDFThumbnailCollectionViewController: UICollectionViewController {
     var document: PDFDocument!
     
+    var showImages = true {
+        didSet {
+            if (showImages) {
+                self.pageImages = document.allPageImages()
+            }
+        }
+    }
+    
+    private var pageImages = [UIImage]()
+    
     var currentPageIndex: Int = 0 {
         didSet {
+            if !showImages {
+                return
+            }
+            
             guard let collectionView = collectionView else { return }
             let curentPageIndexPath = NSIndexPath(forRow: currentPageIndex, inSection: 0)
             if !collectionView.indexPathsForVisibleItems().contains(curentPageIndexPath) {
@@ -27,16 +41,9 @@ internal final class PDFThumbnailCollectionViewController: UICollectionViewContr
     }
     
     weak var delegate: PDFThumbnailControllerDelegate?
-    
-    private var pageImages: [UIImage]!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        pageImages = document.allPageImages()
-    }
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return pageImages?.count ?? 0
+        return pageImages.count
     }
 
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
