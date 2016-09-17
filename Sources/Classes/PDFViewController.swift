@@ -9,8 +9,8 @@ import UIKit
 
 
 /// Controller that is able to interact and navigate through pages of a `PDFDocument`
-public final class PDFViewController: UIViewController {
-    @IBOutlet private var collectionView: UICollectionView!
+public class PDFViewController: UIViewController {
+    @IBOutlet public private(set) var collectionView: UICollectionView!
     @IBOutlet private weak var thumbnailCollectionControllerContainer: UIView!
     @IBOutlet private var thumbnailCollectionControllerHeight: NSLayoutConstraint!
     @IBOutlet private var thumbnailCollectionControllerWidth: NSLayoutConstraint!
@@ -22,7 +22,7 @@ public final class PDFViewController: UIViewController {
     /// Image used to override the default action button image
     public var actionButtonImage: UIImage?
     
-    private var currentPageIndex: Int = 0
+    public private(set) var currentPageIndex: Int = 0
     private var thumbnailCollectionController: PDFThumbnailCollectionViewController?
     
     static let images = NSCache()
