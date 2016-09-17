@@ -39,6 +39,8 @@ internal final class TiledView: UIView {
     
     // Draw the CGPDFPage into the layer at the correct scale.
     override func drawLayer(layer: CALayer, inContext con: CGContext) {
+        guard let leftPdfPage = leftPdfPage else { return }
+        
         // Fill the background with white.
         CGContextSetRGBFillColor(con, 1.0, 1.0, 1.0, 1.0)
         CGContextFillRect(con, bounds)
@@ -50,7 +52,7 @@ internal final class TiledView: UIView {
     
         // Scale the context so that the PDF page is rendered at the correct size for the zoom level.
         CGContextScaleCTM(con, myScale, myScale)
-        CGContextDrawPDFPage(con, leftPdfPage!)
+        CGContextDrawPDFPage(con, leftPdfPage)
         CGContextRestoreGState(con)
     }
     
