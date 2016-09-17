@@ -31,7 +31,7 @@ internal final class PDFPageView: UIScrollView {
     private weak var pageViewDelegate: PDFPageViewDelegate?
     
     init(frame: CGRect, document: PDFDocument, pageNumber: Int, pageViewDelegate: PDFPageViewDelegate?) {
-        let backgroundImage = document.getPDFPageImage(pageNumber + 1)
+        
         guard let pageRef = CGPDFDocumentGetPage(document.coreDocument, pageNumber + 1) else { fatalError() }
         
         PDFPage = pageRef
@@ -44,13 +44,17 @@ internal final class PDFPageView: UIScrollView {
         
         guard !CGRectIsEmpty(pageRect) else { fatalError() }
         
-        backgroundImageView = UIImageView(image: backgroundImage)
+        backgroundImageView = UIImageView()
         backgroundImageView.frame = pageRect
         
         // Create the TiledPDFView based on the size of the PDF page and scale it to fit the view.
         tiledPDFView = TiledView(frame: pageRect, scale: PDFScale!, newPage: PDFPage)
         
         super.init(frame: frame)
+        
+        document.getPDFPageImageAsync(pageNumber + 1) { image in
+            self.backgroundImageView.image = image
+        }
         
         updateMinimumMaximumZoom()
         zoomReset()

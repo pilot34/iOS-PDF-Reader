@@ -23,6 +23,7 @@ public struct PDFDocument {
     
     
     let imagesCache = NSCache()
+    let queue = NSOperationQueue()
 
 
     /**
@@ -78,9 +79,31 @@ public struct PDFDocument {
         if let image = self.imagesCache.objectForKey(pageNumber) as? UIImage {
             return image
         } else {
-            guard let image = self.imageFromPDFPage(pageNumber) else { return nil }
-            self.imagesCache.setObject(image, forKey: pageNumber)
+            let image = self.imageFromPDFPage(pageNumber)
+            if (image != nil) {
+                self.imagesCache.setObject(image!, forKey: pageNumber)
+            }
             return image
+        }
+    }
+    
+    func getPDFPageImageAsync(pageNumber: Int, action: (UIImage?)->()) {
+        if let image = self.imagesCache.objectForKey(pageNumber) as? UIImage {
+            action(image)
+        } else {
+            self.queue.addOperationWithBlock {
+                
+                if let image = self.imagesCache.objectForKey(pageNumber) as? UIImage {
+                    action(image)
+                    return
+                }
+                
+                let image = self.imageFromPDFPage(pageNumber)
+                if (image != nil) {
+                    self.imagesCache.setObject(image!, forKey: pageNumber)
+                }
+                dispatch_async(dispatch_get_main_queue()) { action(image) }
+            }
         }
     }
     
